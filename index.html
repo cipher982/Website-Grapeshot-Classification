@@ -1,9 +1,26 @@
+<!--
+Copyright 2018 Google LLC. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==============================================================================
+-->
+
 <html>
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- <link rel="stylesheet" href="../shared/tfjs-examples.css" /> -->
+  <link rel="stylesheet" href="../shared/tfjs-examples.css" />
 </head>
 
 <body>
@@ -92,27 +109,25 @@
       <section>
         <p class='section-head'>Description</p>
         <p>
-          This example uses custom word embeddings and dense neural layers based in TensorFlow to 
-          train a natural language model (NLP) model based on scraped text from a large collection
-          of webpages scraped from recent URLs seen from the Requests data.
-          
-          The model is trained to replicate the Grapeshot URL classification and runs fully in
-          Javascript from within the browser.
-          <!-- <a href="https://webpage.com">Test Link</a> -->
+          This example uses custom word embeddings and dense neural layers based in 
+          TensorFlow to train a natural language model (NLP) model based on scraped
+          text from a large collection of webpages scraped from recent URLs seen
+          from the Requests data. The model is trained to replicate the Grapeshot 
+          URL classification and runs fully in Javascript from within the browser. 
         </p>
       </section>
 
       <section>
         <p class='section-head'>Instructions</p>
         <p>
-          Using the buttons below you can either train a new model from scratch or load a pre-trained model and
-          test its performance.
+          Using the buttons below you can either train a new model from scratch or load
+          a pre-trained model and run a prediction on a custom URL of your choosing. 
         </p>
         <p>
-          If you train a model from scratch you can also save it to browser local storage.
+          <u>Train From Scratch:</u> If you train a model from scratch you can also save it to browser local storage.
         </p>
         <p>
-          If you load a pre-trained model you can edit the properties in first row of "Test Examples" to generate
+          <u>Load Pre-Trained Model:</u> If you load a pre-trained model you can edit the properties in first row of "Test Examples" to generate
           a prediction for those data points.
         </p>
       </section>
@@ -178,37 +193,44 @@
       <section>
         <p class='section-head'>Test Examples</p>
 
-        <div id="evaluate-inputs">
-          <table id="evaluate-inputs-table">
+        <div id="evaluate">
+          <table id="evaluate-table">
             <tr>
-              <th>Title</th>
-              <th>Body</th>
-            </tr>
-
-            <tbody id="evaluate-tbody">
-              <tr>
-                <td>
-                  <input id="petal-length" value="TensorFlow and JavaScript Machine Learning Classifier!"></input>
-                </td>
-                <td>
-                  <input id="petal-width" value="This page will help you classify the likely grapeshot category based on the various words and sentences found within a website URL."></input>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div id="evaluate-inputs">
-          <table id="evaluate-inputs-table">
-            <tr>
+              <th>Petal length</th>
+              <th>Petal width</th>
+              <th>Sepal length</th>
+              <th>Sepal width</th>
               <th>True class</th>
               <th>Predicted class</th>
               <th>Class Probabilities</th>
             </tr>
-            <tr>
+            <tbody id="evaluate-tbody">
+              <tr>
+                <td>
+                  <input id="petal-length" value="5.1"></input>
+                  <button id="petal-length-inc">+</button>
+                  <button id="petal-length-dec">-</button>
+                </td>
+                <td>
+                  <input id="petal-width" value="3.5"></input>
+                  <button id="petal-width-inc">+</button>
+                  <button id="petal-width-dec">-</button>
+                </td>
+                <td>
+                  <input id="sepal-length" value="1.4"></input>
+                  <button id="sepal-length-inc">+</button>
+                  <button id="sepal-length-dec">-</button>
+                </td>
+                <td>
+                  <input id="sepal-width" value="0.2"></input>
+                  <button id="sepal-width-inc">+</button>
+                  <button id="sepal-width-dec">-</button>
+                </td>
                 <td></td>
                 <td id="winner"></td>
                 <td id="logits"></td>
-            </tr>
+              </tr>
+            </tbody>
           </table>
         </div>
       </section>
