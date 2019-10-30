@@ -1,18 +1,8 @@
-# TensorFlow.js Example: Iris Classification
+# TensorFlow.js Demo: Grapeshot URL Classification
 
-This demo shows how to perform classification on the
-[classic Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set)
-using the Layers API of TensorFlow.js.
+Using neural networks in TensorFlow to predict a webpage Grapeshot label and run it all in TensorFlow.JS
 
-It demonstrates ways to create a model:
-* Loading a pretrained model hosted at a URL, using `tf.loadLayersModel()`
-* Creating and training a model from scratch in the browser.
-
-This demo also shows how to use the `callbacks` field of the `Model.fit()`
-configuration to perform real-time visualization of training progress.
-
-The model consists of two `Dense` layers: one with a `relu` activation followed
-by another with a `softmax` activation.
+This example uses custom word embeddings and dense neural layers based in TensorFlow to train a natural language model (NLP) model based on scraped text from a large collection of webpages scraped from recent URLs seen from the Requests data. The model is trained to replicate the Grapeshot URL classification and runs fully in Javascript from within the browser. 
 
 To launch the demo, do
 
@@ -20,5 +10,3 @@ To launch the demo, do
 yarn
 yarn watch
 ```
-
-[See this example live!](https://storage.googleapis.com/tfjs-examples/iris/dist/index.html)
