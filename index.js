@@ -22,6 +22,7 @@ import * as data from './data';
 import * as loader from './loader';
 import * as ui from './ui';
 import { spawn } from 'child_process';
+//import * as tokenizer from './word_index';
 
 let model;
 //console.log("START");
@@ -72,7 +73,7 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
   const beginMs = performance.now();
   // Call `model.fit` to train the model.
   const history = await model.fit(xTrain, yTrain, {
-    epochs: 50,
+    epochs: 10,
     validationData: [xTest, yTest],
     callbacks: {
       onEpochEnd: async (epoch, logs) => {
@@ -88,7 +89,7 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
       },
     }
   });
-  const secPerEpoch = (performance.now() - beginMs) / (1000 * 50);
+  const secPerEpoch = (performance.now() - beginMs) / (1000 * 10);
   ui.status(
       `Model training complete:  ${secPerEpoch.toFixed(4)} seconds per epoch`);
   return model;
@@ -114,34 +115,15 @@ async function predictOnManualInput(model) {
     console.info("inputData: "+ inputData);
     //console.info("Shape: ")
 
-    function callName(req, res) { 
-      
-      // Use child_process.spawn method from  
-      // child_process module and assign it 
-      // to variable spawn 
-      var spawn = require("child_process").spawn; 
-      var process = spawn('python',["./hello.py", 
-                              'David', 
-                              'Rose'] ); 
-    
-      // Takes stdout data from script which executed 
-      // with arguments and send this data to res object 
-      process.stdout.on('data', function(data) { 
-          console.info(data); 
-      } ) 
-    }
-    callName();
-    
-    
 
+    
     const input = tf.tensor2d([inputData], [1, 20]);
 
-    // Call `model.predict` to get the prediction output as probabilities for
-    // the Iris flower categories.
+    // Call `model.predict` to get the prediction output as probabilities
 
     const predictOut = model.predict(input);
     const logits = Array.from(predictOut.dataSync());
-    const winner = data.IRIS_CLASSES[predictOut.argMax(-1).dataSync()[0]];
+    const winner = data.CLASSES[predictOut.argMax(-1).dataSync()[0]];
     ui.setManualInputWinnerMessage(winner);
     ui.renderLogitsForManualInput(logits);
   });
@@ -161,7 +143,7 @@ async function calculateAndDrawConfusionMatrix(model, xTest, yTest) {
 }
 
 /**
- * Run inference on some test Iris flower data.
+ * Run inference on some test data.
  *
  * @param model The instance of `tf.Model` to run the inference with.
  * @param xTest Test data feature, a `tf.Tensor` of shape [numTestExamples, 4].
@@ -189,10 +171,10 @@ const HOSTED_MODEL_JSON_URL =
     //'https://ione-datascience-3be7-us-east-1.s3.amazonaws.com/public/tfJs_demo/model.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAXUBHAPNTUTFCCFXK/20191030/us-east-1/s3/aws4_request&X-Amz-Date=20191030T212407Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=203b35c2cd3b224b075ce2b2854f1163916d802dae9b4882c510abc813ad27d4';
 
 /**
- * The main function of the Iris demo.
+ * The main function of the demo.
  */
-async function iris() {
-  const [xTrain, yTrain, xTest, yTest] = data.getIrisData(0.15);
+async function demo() {
+  const [xTrain, yTrain, xTest, yTest] = data.getData(0.15);
 
   //const [xTrain]
 
@@ -241,4 +223,4 @@ async function iris() {
   ui.wireUpEvaluateTableCallbacks(() => predictOnManualInput(model));
 }
 
-iris();
+demo();
