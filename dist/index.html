@@ -196,6 +196,7 @@ limitations under the License.
             <col width="100">
             <col width="200">
             <tr>
+              <th>URL</th>
               <th>Title</th>
               <th>Body</th>
               <th>True class</th>
@@ -205,14 +206,38 @@ limitations under the License.
             <tbody id="evaluate-tbody">
               <tr>
                 <td>
-                  <textarea id="title" value="News of the World">
+                  <textarea id="url">
+                  www.thecookingdish.com
                   </textarea>
                 </td>
                 <td>
-                  <textarea id="body" value="This webpage gives the most up-to-date news straight to your computer!">
+                  <textarea id="title" readonly="">
+                      The Cooking Dish • New Recipes, Good Food, Learn how to Cook
                   </textarea>
                 </td>
-                <td></td>
+                <td>
+                  <textarea id="body" readonly="">
+About Us Recipes Welcome to my kitchen! This is 
+where the crazy stuff happens. Sometimes between
+all the spilled milk and burned toast, a delicious
+creation is born; when it is, I write a little 
+something about it and post it here. More Recipes and Goodness 
+If you really want to make a friend, go to someone’s house 
+and eat with him… the people who give you their food give 
+you their heart. This is where you and I embark on an adventure
+into my wandering mind. I'll share with you what I'm learning 
+and thinking about (along with many other strange and wonderful
+thoughts), so grab some popcorn and let's chat! Visit the Blog
+This is where you and I explore all those kitchen thingies laying around.
+Let's open the drawers, dust out the pantry, and discover some stuff. 
+Discover More Essentials These are recommended products that I'm currently
+using in my own kitchen.
+                  </textarea>
+                </td>
+                <td><textatrea>
+                    gs_interest_female
+                
+                </textatrea></td>
                 <td id="winner"></td>
                 <td id="logits"></td>
               </tr>
