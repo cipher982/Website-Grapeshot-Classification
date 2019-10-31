@@ -22,7 +22,7 @@ import * as ui from './ui';
  * Test whether a given URL is retrievable.
  */
 export async function urlExists(url) {
-  ui.status('Testing url ' + url);
+  ui.status('Setting up environment. . .');
   try {
     const response = await fetch(url, {method: 'HEAD'});
     return response.ok;
@@ -37,7 +37,7 @@ export async function urlExists(url) {
  * @return An instance of `tf.Model` with model topology and weights loaded.
  */
 export async function loadHostedPretrainedModel(url) {
-  ui.status('Loading pretrained model from ' + url);
+  ui.status('Loading pretrained model. . .');
   try {
     const model = await tf.loadLayersModel(url);
     ui.status('Done loading pretrained model.');

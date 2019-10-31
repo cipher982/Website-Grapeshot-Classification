@@ -21,6 +21,7 @@ import * as tfvis from '@tensorflow/tfjs-vis';
 import * as data from './data';
 import * as loader from './loader';
 import * as ui from './ui';
+import { spawn } from 'child_process';
 
 let model;
 //console.log("START");
@@ -46,17 +47,22 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
   // Define the topology of the model
   const model = tf.sequential();
   model.add(tf.layers.embedding(
-      {inputDim: params.vocabSize, outputDim: params.embeddingDim, inputLength: 200}));
+      //{inputDim: params.vocabSize, outputDim: params.embeddingDim, inputLength: 200}));
+      //{inputDim: params.vocabSize, outputDim: params.embeddingDim}));
+      {inputDim: 16, outputDim: 500, inputLength: 200}));
+
   model.add(tf.layers.dense({units: 64, activation: 'relu'}));
   model.add(tf.layers.dense({units: 32, activation: 'relu'}));
   model.add(tf.layers.dense({units: 16, activation: 'relu'}));
+  model.add(tf.layers.flatten());
   model.add(tf.layers.dense({units: 20, activation: 'softmax'}));
   model.summary();
 
   const optimizer = tf.train.adam();
   model.compile({
     optimizer: optimizer,
-    loss: 'sparseCategoricalCrossentropy',
+    //loss: 'sparseCategoricalCrossentropy',
+    loss: 'categoricalCrossentropy',
     metrics: ['accuracy'],
   });
 
@@ -66,7 +72,7 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
   const beginMs = performance.now();
   // Call `model.fit` to train the model.
   const history = await model.fit(xTrain, yTrain, {
-    epochs: params.epochs,
+    epochs: 50,
     validationData: [xTest, yTest],
     callbacks: {
       onEpochEnd: async (epoch, logs) => {
@@ -82,14 +88,14 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
       },
     }
   });
-  const secPerEpoch = (performance.now() - beginMs) / (1000 * params.epochs);
+  const secPerEpoch = (performance.now() - beginMs) / (1000 * 50);
   ui.status(
       `Model training complete:  ${secPerEpoch.toFixed(4)} seconds per epoch`);
   return model;
 }
 
 /**
- * Run inference on manually-input Iris flower data.
+ * Run inference on manually-input data.
  *
  * @param model The instance of `tf.Model` to run the inference with.
  */
@@ -103,11 +109,32 @@ async function predictOnManualInput(model) {
   // `predict` call is released at the end.
   tf.tidy(() => {
     // Prepare input data as a 2D `tf.Tensor`.
+    console.info("Beginning inference on new data. . .")
     const inputData = ui.getManualInputData();
+    console.info("inputData: "+ inputData);
+    //console.info("Shape: ")
 
+    function callName(req, res) { 
+      
+      // Use child_process.spawn method from  
+      // child_process module and assign it 
+      // to variable spawn 
+      var spawn = require("child_process").spawn; 
+      var process = spawn('python',["./hello.py", 
+                              'David', 
+                              'Rose'] ); 
+    
+      // Takes stdout data from script which executed 
+      // with arguments and send this data to res object 
+      process.stdout.on('data', function(data) { 
+          console.info(data); 
+      } ) 
+    }
+    callName();
+    
+    
 
-
-    const input = tf.tensor2d([inputData], [1, 4]);
+    const input = tf.tensor2d([inputData], [1, 20]);
 
     // Call `model.predict` to get the prediction output as probabilities for
     // the Iris flower categories.
@@ -158,7 +185,8 @@ async function evaluateModelOnTestData(model, xTest, yTest) {
 }
 
 const HOSTED_MODEL_JSON_URL =
-    'https://ione-datascience-3be7-us-east-1.s3.amazonaws.com/public/tfJs_demo/model.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAXUBHAPNTUTFCCFXK/20191030/us-east-1/s3/aws4_request&X-Amz-Date=20191030T212407Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=203b35c2cd3b224b075ce2b2854f1163916d802dae9b4882c510abc813ad27d4';
+      'https://raw.githubusercontent.com/cipher982/Sample-TF.JS/master/assets/model.json'
+    //'https://ione-datascience-3be7-us-east-1.s3.amazonaws.com/public/tfJs_demo/model.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAXUBHAPNTUTFCCFXK/20191030/us-east-1/s3/aws4_request&X-Amz-Date=20191030T212407Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=203b35c2cd3b224b075ce2b2854f1163916d802dae9b4882c510abc813ad27d4';
 
 /**
  * The main function of the Iris demo.
@@ -181,7 +209,8 @@ async function iris() {
       });
 
   if (await loader.urlExists(HOSTED_MODEL_JSON_URL)) {
-    ui.status('Model available: ' + HOSTED_MODEL_JSON_URL);
+    //ui.status('Model available: ' + HOSTED_MODEL_JSON_URL);
+    ui.status('Environment loaded.');
     const button = document.getElementById('load-pretrained-remote');
     button.addEventListener('click', async () => {
       ui.clearEvaluateTable();
