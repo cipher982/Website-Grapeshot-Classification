@@ -23,9 +23,10 @@ import * as loader from './loader';
 import * as ui from './ui';
 
 let model;
+//console.log("START");
 
 /**
- * Train a `tf.Model` to recognize Iris flower type.
+ * Predict website label classification.
  *
  * @param xTrain Training feature data, a `tf.Tensor` of shape
  *   [numTrainExamples, 4]. The second dimension include the features
@@ -42,17 +43,20 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
 
   const params = ui.loadTrainParametersFromUI();
 
-  // Define the topology of the model: two dense layers.
+  // Define the topology of the model
   const model = tf.sequential();
-  model.add(tf.layers.dense(
-      {units: 10, activation: 'sigmoid', inputShape: [xTrain.shape[1]]}));
-  model.add(tf.layers.dense({units: 3, activation: 'softmax'}));
+  model.add(tf.layers.embedding(
+      {inputDim: params.vocabSize, outputDim: params.embeddingDim, inputLength: 200}));
+  model.add(tf.layers.dense({units: 64, activation: 'relu'}));
+  model.add(tf.layers.dense({units: 32, activation: 'relu'}));
+  model.add(tf.layers.dense({units: 16, activation: 'relu'}));
+  model.add(tf.layers.dense({units: 20, activation: 'softmax'}));
   model.summary();
 
-  const optimizer = tf.train.adam(params.learningRate);
+  const optimizer = tf.train.adam();
   model.compile({
     optimizer: optimizer,
-    loss: 'categoricalCrossentropy',
+    loss: 'sparseCategoricalCrossentropy',
     metrics: ['accuracy'],
   });
 
@@ -74,7 +78,7 @@ async function trainModel(xTrain, yTrain, xTest, yTest) {
         trainLogs.push(logs);
         tfvis.show.history(lossContainer, trainLogs, ['loss', 'val_loss'])
         tfvis.show.history(accContainer, trainLogs, ['acc', 'val_acc'])
-        calculateAndDrawConfusionMatrix(model, xTest, yTest);
+        //calculateAndDrawConfusionMatrix(model, xTest, yTest);
       },
     }
   });
@@ -100,6 +104,9 @@ async function predictOnManualInput(model) {
   tf.tidy(() => {
     // Prepare input data as a 2D `tf.Tensor`.
     const inputData = ui.getManualInputData();
+
+
+
     const input = tf.tensor2d([inputData], [1, 4]);
 
     // Call `model.predict` to get the prediction output as probabilities for
@@ -123,14 +130,6 @@ async function calculateAndDrawConfusionMatrix(model, xTest, yTest) {
     return [preds, labels];
   });
 
-  const confMatrixData = await tfvis.metrics.confusionMatrix(labels, preds);
-  const container = document.getElementById('confusion-matrix');
-  tfvis.render.confusionMatrix(
-      container,
-      {values: confMatrixData, labels: data.IRIS_CLASSES},
-      {shadeDiagonal: true},
-  );
-
   tf.dispose([preds, labels]);
 }
 
@@ -152,14 +151,14 @@ async function evaluateModelOnTestData(model, xTest, yTest) {
     const yPred = predictOut.argMax(-1);
     ui.renderEvaluateTable(
         xData, yTrue, yPred.dataSync(), predictOut.dataSync());
-    calculateAndDrawConfusionMatrix(model, xTest, yTest);
+    //calculateAndDrawConfusionMatrix(model, xTest, yTest);
   });
 
   predictOnManualInput(model);
 }
 
 const HOSTED_MODEL_JSON_URL =
-    'https://storage.googleapis.com/tfjs-models/tfjs/iris_v1/model.json';
+    'https://ione-datascience-3be7-us-east-1.s3.amazonaws.com/public/tfJs_demo/model.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAXUBHAPNTUTFCCFXK/20191030/us-east-1/s3/aws4_request&X-Amz-Date=20191030T212407Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=203b35c2cd3b224b075ce2b2854f1163916d802dae9b4882c510abc813ad27d4';
 
 /**
  * The main function of the Iris demo.
@@ -167,12 +166,15 @@ const HOSTED_MODEL_JSON_URL =
 async function iris() {
   const [xTrain, yTrain, xTest, yTest] = data.getIrisData(0.15);
 
+  //const [xTrain]
+
   const localLoadButton = document.getElementById('load-local');
   const localSaveButton = document.getElementById('save-local');
   const localRemoveButton = document.getElementById('remove-local');
 
   document.getElementById('train-from-scratch')
       .addEventListener('click', async () => {
+        ui.status('gogo model train scratch');
         model = await trainModel(xTrain, yTrain, xTest, yTest);
         await evaluateModelOnTestData(model, xTest, yTest);
         localSaveButton.disabled = false;

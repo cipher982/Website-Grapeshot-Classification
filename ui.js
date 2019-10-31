@@ -28,52 +28,15 @@ export function clearEvaluateTable() {
 }
 
 /**
- * Get manually input Iris data from the input boxes.
+ * Get manually input data from the input boxes.
  */
 export function getManualInputData() {
   return [
-    Number(document.getElementById('petal-length').value),
-    Number(document.getElementById('petal-width').value),
-    Number(document.getElementById('sepal-length').value),
-    Number(document.getElementById('sepal-width').value),
+    String(document.getElementById('title').value),
+    String(document.getElementById('body').value),
   ];
 }
 
-const confusionMatrixCanvas = document.getElementById('confusion-matrix');
-
-/**
- * Render a confusion matrix.
- *
- * @param {tf.Tensor} confusionMat Confusion matrix as a 2D tf.Tensor object.
- *   The value at row `r` and column `c` is the number of times examples of
- *   actual class `r` were predicted as class `c`.
- */
-export function drawConfusionMatrix(confusionMat) {
-  const w = confusionMatrixCanvas.width;
-  const h = confusionMatrixCanvas.height;
-  const ctx = confusionMatrixCanvas.getContext('2d');
-  ctx.clearRect(0, 0, w, h);
-  const n = confusionMat.shape[0];
-  const rawConfusion = confusionMat.dataSync();
-  const normalizedConfusion =
-      confusionMat.div(confusionMat.sum(-1).expandDims(0)).dataSync();
-  for (let i = 0; i < n; ++i) {
-    for (let j = 0; j < n; ++j) {
-      const rgbValue = Math.round(255 * (1 - normalizedConfusion[i * n + j]));
-      ctx.fillStyle = `rgb(${rgbValue}, ${rgbValue}, ${rgbValue})`;
-      ctx.fillRect(w / n * j, h / n * i, w / n, h / n);
-      ctx.stroke();
-      ctx.strokeStyle = '#808080';
-      ctx.rect(w / n * j, h / n * i, w / n, h / n);
-      ctx.stroke();
-      ctx.font = '18px Arial';
-      ctx.fillStyle = '#ff00ff';
-      ctx.fillText(
-          `${rawConfusion[i * n + j]}`, w / n * (j + 0.45), h / n * (i + 0.66));
-      ctx.stroke();
-    }
-  }
-}
 
 export function setManualInputWinnerMessage(message) {
   const winnerElement = document.getElementById('winner');
@@ -146,63 +109,21 @@ export function renderEvaluateTable(xData, yTrue, yPred, logits) {
 }
 
 export function wireUpEvaluateTableCallbacks(predictOnManualInputCallback) {
-  const petalLength = document.getElementById('petal-length');
-  const petalWidth = document.getElementById('petal-width');
-  const sepalLength = document.getElementById('sepal-length');
-  const sepalWidth = document.getElementById('sepal-width');
+  const title = document.getElementById('title');
+  const body = document.getElementById('body');
 
-  const increment = 0.1;
-  document.getElementById('petal-length-inc').addEventListener('click', () => {
-    petalLength.value = (Number(petalLength.value) + increment).toFixed(1);
+  document.getElementById('title').addEventListener('change', () => {
     predictOnManualInputCallback();
   });
-  document.getElementById('petal-length-dec').addEventListener('click', () => {
-    petalLength.value = (Number(petalLength.value) - increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('petal-width-inc').addEventListener('click', () => {
-    petalWidth.value = (Number(petalWidth.value) + increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('petal-width-dec').addEventListener('click', () => {
-    petalWidth.value = (Number(petalWidth.value) - increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-length-inc').addEventListener('click', () => {
-    sepalLength.value = (Number(sepalLength.value) + increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-length-dec').addEventListener('click', () => {
-    sepalLength.value = (Number(sepalLength.value) - increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-width-inc').addEventListener('click', () => {
-    sepalWidth.value = (Number(sepalWidth.value) + increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-width-dec').addEventListener('click', () => {
-    sepalWidth.value = (Number(sepalWidth.value) - increment).toFixed(1);
-    predictOnManualInputCallback();
-  });
-
-  document.getElementById('petal-length').addEventListener('change', () => {
-    predictOnManualInputCallback();
-  });
-  document.getElementById('petal-width').addEventListener('change', () => {
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-length').addEventListener('change', () => {
-    predictOnManualInputCallback();
-  });
-  document.getElementById('sepal-width').addEventListener('change', () => {
+  document.getElementById('body').addEventListener('change', () => {
     predictOnManualInputCallback();
   });
 }
 
 export function loadTrainParametersFromUI() {
   return {
-    epochs: Number(document.getElementById('train-epochs').value),
-    learningRate: Number(document.getElementById('learning-rate').value)
+    vocabSize: Number(document.getElementById('vocab-size').value),
+    embeddingDim: Number(document.getElementById('embedding-dim').value)
   };
 }
 

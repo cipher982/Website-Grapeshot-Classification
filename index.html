@@ -109,11 +109,12 @@ limitations under the License.
       <section>
         <p class='section-head'>Description</p>
         <p>
-          This example uses custom word embeddings and dense neural layers based in 
-          TensorFlow to train a natural language model (NLP) model based on scraped
-          text from a large collection of webpages scraped from recent URLs seen
-          from the Requests data. The model is trained to replicate the Grapeshot 
-          URL classification and runs fully in Javascript from within the browser. 
+          This example takes a URL and scrapes the content, then uses custom word
+          embeddings and dense neural layers based in TensorFlow to train a natural
+          language model (NLP) model based on scraped text from a large collection of
+          webpage URLs seen in the Requests data. The model is trained to replicate 
+          the Grapeshot URL classification and runs fully in Javascript from within the
+          browser. 
         </p>
       </section>
 
@@ -139,12 +140,12 @@ limitations under the License.
           <h3>Train Model</h3>
           <div class="create-model">
             <div class="input-div">
-              <label class="input-label">Train Epochs:</label>
-              <input id="train-epochs" type="number" value="40"></input>
+              <label class="input-label">Vocab Size:</label>
+              <input id="vocab-size" type="number" value="500"></input>
             </div>
             <div class="input-div">
-              <span class="input-label">Learning Rate:</span>
-              <input id="learning-rate" type="number" value="0.01"></input>
+              <span class="input-label">Embedding Dimension:</span>
+              <input id="embedding-dim" type="number" value="16"></input>
             </div>
             <button id="train-from-scratch">Train model from scratch</button>
           </div>
@@ -183,10 +184,10 @@ limitations under the License.
             <h4>Accuracy</h4>
             <div class="canvases" id="accuracyCanvas"></div>
           </div>
-          <div>
+          <!-- <div>
             <h4>Confusion Matrix (on validation set)</h4>
             <div id="confusion-matrix"></div>
-          </div>
+          </div> -->
         </div>
       </section>
 
@@ -194,12 +195,12 @@ limitations under the License.
         <p class='section-head'>Test Examples</p>
 
         <div id="evaluate">
-          <table id="evaluate-table">
+          <table id="evaluate-table" width="100%" STYLE="table-layout:fixed;" >
+            <col width="100">
+            <col width="200">
             <tr>
-              <th>Petal length</th>
-              <th>Petal width</th>
-              <th>Sepal length</th>
-              <th>Sepal width</th>
+              <th>Title</th>
+              <th>Body</th>
               <th>True class</th>
               <th>Predicted class</th>
               <th>Class Probabilities</th>
@@ -207,24 +208,15 @@ limitations under the License.
             <tbody id="evaluate-tbody">
               <tr>
                 <td>
-                  <input id="petal-length" value="5.1"></input>
-                  <button id="petal-length-inc">+</button>
-                  <button id="petal-length-dec">-</button>
+                  <input id="Title" 
+                  value="News of the World" 
+                  size="80"></input>
                 </td>
                 <td>
-                  <input id="petal-width" value="3.5"></input>
-                  <button id="petal-width-inc">+</button>
-                  <button id="petal-width-dec">-</button>
-                </td>
-                <td>
-                  <input id="sepal-length" value="1.4"></input>
-                  <button id="sepal-length-inc">+</button>
-                  <button id="sepal-length-dec">-</button>
-                </td>
-                <td>
-                  <input id="sepal-width" value="0.2"></input>
-                  <button id="sepal-width-inc">+</button>
-                  <button id="sepal-width-dec">-</button>
+                  <input id="Body" 
+                  value="This webpage gives the most up-to-date news straight to your computer!"
+                  size="380">
+                  </input>
                 </td>
                 <td></td>
                 <td id="winner"></td>
