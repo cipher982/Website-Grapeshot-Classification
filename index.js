@@ -111,13 +111,16 @@ async function predictOnManualInput(model) {
   tf.tidy(() => {
     // Prepare input data as a 2D `tf.Tensor`.
     console.info("Beginning inference on new data. . .")
-    const inputData = ui.getManualInputData();
+    //const inputData = ui.getManualInputData();
     console.info("inputData: "+ inputData);
     //console.info("Shape: ")
 
-
+    // Input Fake data to test??
+    var inputData = Array.from(Array(200).keys())
     
-    const input = tf.tensor2d([inputData], [1, 20]);
+    //const input = tf.tensor2d([inputData], [1, 20]);
+    const input = tf.tensor2d([inputData], [1, 200]);
+
 
     // Call `model.predict` to get the prediction output as probabilities
 
